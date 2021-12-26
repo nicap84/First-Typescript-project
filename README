@@ -1,0 +1,13 @@
+Udemy Typescript course (https://www.udemy.com/course/understanding-typescript/learn/lecture/16894076?start=375#content)
+Run:
+npm start
+tsc src/app.ts --outDir ./dist -w
+tsc src/app.ts --outDir ./dist -w --experimentalDecorators --target ES5
+
+
+Resources
+* Genereics: https://www.typescriptlang.org/docs/handbook/generics.html (section 7)
+* Utility types: https://www.typescriptlang.org/docs/handbook/utility-types.html (video 101)
+* Reference vs primitive values: https://academind.com/tutorials/reference-vs-primitive-values/ (video 99)
+* Property descriptor: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty (video 113)
+* More decorators: https://www.typescriptlang.org/docs/handbook/decorators.html (video 118)
