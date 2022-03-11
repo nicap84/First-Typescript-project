@@ -67,9 +67,9 @@ class ProjectInput {
     }
 
     // Event steps
-    @autobind
     private submitHandler(event: Event) {
         event.preventDefault();
+        console.log('submitHandler', this.titleInputElement.value);
         const userInput = this.gatherUserInput();
         if (Array.isArray(userInput)){
             const [title, description, people] = userInput;
@@ -79,10 +79,10 @@ class ProjectInput {
     }
 
     // Add event listener
+    // remove bind to use the decorator @autobind
     private configure() {
-        // Change by autobin decorator
-        console.log(this);
-        this.element.addEventListener('submit', this.submitHandler);
+        // TODO bind is not working
+        this.element.addEventListener('submit', this.submitHandler.bind(this));
     }
 
     private attach(){
@@ -90,4 +90,4 @@ class ProjectInput {
     }
 }
 
-const bla = new ProjectInput();
+const printInput = new ProjectInput();

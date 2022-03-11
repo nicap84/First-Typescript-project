@@ -2,9 +2,9 @@ This is my first TypeScript project based on Udemy course
 
 Udemy Typescript course (https://www.udemy.com/course/understanding-typescript/learn/lecture/16894076?start=375#content)
 Run:
-tsc src/app.ts --outDir ./dist -w
-tsc src/app.ts --outDir ./dist -w --experimentalDecorators --target ES5
-npm start
+npm i
+npm run ts:watch
+npm run start
 
 
 Resources
