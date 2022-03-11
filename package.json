@@ -9,10 +9,9 @@
     "ts:watch": "tsc src/app.ts --outDir ./dist -w --experimentalDecorators --target ES5"
   },
   "keywords": [
-    "typescript",
-    "course"
+    "typescript"
   ],
-  "author": "Maximilian Schwarzmüller",
+  "author": "Maria Marin",
   "license": "ISC",
   "devDependencies": {
     "lite-server": "^2.5.4"
