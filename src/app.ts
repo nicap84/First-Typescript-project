@@ -37,16 +37,16 @@ class ProjectInput {
         // Add id 'user-input' to the form element (for css)
         this.element.id = 'user-input';
         // Acess to the inputs
-        this.titleInputElement = document.querySelector('#title') as HTMLInputElement;
-        this.descriptionInputElement = document.querySelector('#description') as HTMLInputElement;
-        this.peopleInputElement = document.querySelector('#people') as HTMLInputElement;
+        this.titleInputElement =<HTMLInputElement> this.element.querySelector('#title');
+        this.descriptionInputElement = this.element.querySelector('#description') as HTMLInputElement;
+        this.peopleInputElement = this.element.querySelector('#people') as HTMLInputElement;
 
         this.configure();
         this.attach();
     }
 
     //tupla
-    private gatherUserInput(): [string, string, number] | undefined {
+    private gatherUserInput(): [string, string, number] | void {
         const enteredTitle = this.titleInputElement.value;
         const enteredDescription = this.descriptionInputElement.value;
         const enteredPeople = this.peopleInputElement.value;
@@ -79,9 +79,8 @@ class ProjectInput {
     }
 
     // Add event listener
-    // remove bind to use the decorator @autobind
+    // TODO fix @autobind
     private configure() {
-        // TODO bind is not working
         this.element.addEventListener('submit', this.submitHandler.bind(this));
     }
 
