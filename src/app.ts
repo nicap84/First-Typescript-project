@@ -1,3 +1,35 @@
+//Validation
+interface Validatable {
+    value: string | number;
+    required: boolean;
+    // ? is to say that this param is optional
+    minLength?: number;  
+    maxLength?: number;
+    min?: number;
+    max?: number;
+} 
+
+function validate(validatableInput: Validatable): boolean{
+    let isValid = true;
+    if (validatableInput.required){
+        isValid = isValid && validatableInput.value.toString().trim().length !== 0;
+    }
+    if (validatableInput.minLength != null && typeof validatableInput.value == 'string'){
+        isValid= isValid && validatableInput.value.length > validatableInput.minLength;
+    }
+    if (validatableInput.maxLength != null && typeof validatableInput.value == 'string'){
+        isValid= isValid && validatableInput.value.length > validatableInput.maxLength;
+    }
+    if (validatableInput.min != null && typeof validatableInput.value == 'number'){
+        isValid= isValid && validatableInput.value > validatableInput.min;
+    }
+    if (validatableInput.max != null && typeof validatableInput.value == 'number'){
+        isValid= isValid && validatableInput.value > validatableInput.max;
+    }
+    return isValid;
+}
+
+
 // Autobin decorator
 function autobind(
     _: any,
@@ -51,8 +83,27 @@ class ProjectInput {
         const enteredDescription = this.descriptionInputElement.value;
         const enteredPeople = this.peopleInputElement.value;
 
+        const titleValidatable : Validatable = {
+            value: enteredTitle,
+            required: true,
+        }
+
+        const descriptionValidatable : Validatable = {
+            value: enteredDescription,
+            required: true,
+            minLength: 5
+        }
+
+        const peopleValidatable : Validatable = {
+            value: enteredPeople,
+            required: true,
+            min: 1,
+            max: 5
+        }
+
         //validation
-        if (enteredTitle.trim().length === 0 || enteredDescription.trim().length === 0 || enteredPeople.trim().length === 0){
+        if (!validate(titleValidatable) || !validate(descriptionValidatable) || !validate(peopleValidatable)){
+        //if (enteredTitle.trim().length === 0 || enteredDescription.trim().length === 0 || enteredPeople.trim().length === 0){
             alert('There is some input empty');
             return;
         } else {
