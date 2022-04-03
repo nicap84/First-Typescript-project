@@ -54,7 +54,7 @@ class ProjectList {
     // Element where we will render our template
     hostElement: HTMLDivElement;
     element: HTMLElement;
-    assignedProjects: any[];
+    assignedProjects: Project[];
 
     constructor(private type: 'active' | 'finished'){
         //<> and as is type casting
@@ -67,8 +67,12 @@ class ProjectList {
         this.element = importedNode.firstElementChild as HTMLElement;
         this.element.id = `${this.type}-projects`;
 
-        projectState.addListener((projects: any[]) => {
-            this.assignedProjects = projects;
+        projectState.addListener((projects: Project[]) => {
+            const relevantProjects = projects.filter(project => {
+                return (this.type === 'active') ? (project.status === ProjectStatus.Active) : (project.status === ProjectStatus.Finished);
+            })
+            //this.assignedProjects = projects;
+            this.assignedProjects = relevantProjects;
             this.renderProjects();
         });
         
@@ -78,12 +82,12 @@ class ProjectList {
 
     private renderProjects(){
         const listElement = document.getElementById(`${this.type}-project-list`)! as HTMLUListElement;
+        listElement.innerHTML = '';
         for (const projectItem of this.assignedProjects){
             const listItem = document.createElement('li');
             listItem.textContent = projectItem.title;
             listElement.appendChild(listItem);
         } 
-
     }
 
     private renderContext(){
@@ -193,10 +197,12 @@ class ProjectInput {
     }
 }
 
+type Listener = (items: Project[]) => void;
+
 // Global state management class
 class ProjectState{
-    private listeners: any[] = [];
-    private projects: any[] = [];
+    private listeners: Listener[] = [];
+    private projects: Project[] = [];
     private static instance: ProjectState;
 
     //Guarantee that tis is a singleton class
@@ -207,22 +213,22 @@ class ProjectState{
         return this.instance || (this.instance = new ProjectState());
     }
 
-    addListener(listenerFn: Function){
+    addListener(listenerFn: Listener){
         this.listeners.push(listenerFn);
     }
 
-    addProject(title: String, description: String, numOfPeople: number){
-        const newProject = {
-            id: Math.random().toString(),
-            title,
-            description,
-            people: numOfPeople      
-        }
+    addProject(title: string, description: string, numOfPeople: number){
+        const newProject = new Project(Math.random(), title, description, numOfPeople, ProjectStatus.Active);
         this.projects.push(newProject);
         for (const listenerFn of this.listeners) {
             listenerFn(this.projects.slice());
         }
     }
+}
+
+enum ProjectStatus { Active, Finished };
+class Project {
+    constructor (public id: number, public title: string, public description: string, public people: number, public status: ProjectStatus){}
 }
 
 const projectState = ProjectState.getInstance();
