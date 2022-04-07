@@ -48,25 +48,55 @@ function autobind(
     return adjDescriptor;
   }
 
-// Project list class
-class ProjectList {
+  // Base class to render properies
+abstract class Component <T extends HTMLElement, U extends HTMLElement> {
     templateElement: HTMLTemplateElement;
-    // Element where we will render our template
-    hostElement: HTMLDivElement;
-    element: HTMLElement;
+    hostElement: T;
+    element: U;
+
+    // ? in newElementId means optional
+    constructor(templateId: string, hostElementId: string, insertAtStart: boolean, newElementId?: string,) {
+        this.templateElement = <HTMLTemplateElement> document.getElementById(templateId)!;
+        this.hostElement = document.getElementById(hostElementId)! as T;
+
+        // Render the template
+        const importedNode = document.importNode(this.templateElement.content, true);
+        this.element = importedNode.firstElementChild as U;
+        if (newElementId){
+            this.element.id = `${newElementId}-projects`;
+        } 
+
+        this.attach(insertAtStart);
+    }
+
+    private attach(insertAtStart: boolean){
+        this.hostElement.insertAdjacentElement(insertAtStart?'beforeend': 'afterbegin', this.element);
+    }
+
+    abstract configure(): void;
+    abstract renderContent(): void;
+}
+
+// Project list class
+class ProjectList extends Component<HTMLDivElement, HTMLElement> {
     assignedProjects: Project[];
 
     constructor(private type: 'active' | 'finished'){
-        //<> and as is type casting
-        this.templateElement = <HTMLTemplateElement> document.getElementById('project-list')!;
-        this.hostElement = document.getElementById('app')! as HTMLDivElement;
+        // Component constructor
+        super('project-list', 'app', true, `${type}-projects`)
         this.assignedProjects = [];
-    
-        // Render the template
-        const importedNode = document.importNode(this.templateElement.content, true);
-        this.element = importedNode.firstElementChild as HTMLElement;
-        this.element.id = `${this.type}-projects`;
 
+        this.configure();
+        this.renderContent();
+    }
+
+    renderContent(): void {
+        const listId = `${this.type}-project-list`;
+        this.element.querySelector('ul')!.id = listId;
+        this.element.querySelector('h2')!.textContent = this.type.toUpperCase() + ' PROJECTS';
+    }
+
+    configure(): void{
         projectState.addListener((projects: Project[]) => {
             const relevantProjects = projects.filter(project => {
                 return (this.type === 'active') ? (project.status === ProjectStatus.Active) : (project.status === ProjectStatus.Finished);
@@ -75,9 +105,6 @@ class ProjectList {
             this.assignedProjects = relevantProjects;
             this.renderProjects();
         });
-        
-        this.attach();
-        this.renderContext();
     }
 
     private renderProjects(){
@@ -89,47 +116,32 @@ class ProjectList {
             listElement.appendChild(listItem);
         } 
     }
-
-    private renderContext(){
-        const listId = `${this.type}-project-list`;
-        this.element.querySelector('ul')!.id = listId;
-        this.element.querySelector('h2')!.textContent = this.type.toUpperCase() + ' PROJECTS';
-    }
-
-    // Attach the element to the DOM
-    private attach(){
-        this.hostElement.insertAdjacentElement('beforeend', this.element);
-    }
-
 } 
 
 // Project input class
-class ProjectInput {
-    templateElement: HTMLTemplateElement;
-    // Element where we will render our template
-    hostElement: HTMLDivElement;
-    element: HTMLFormElement;
+class ProjectInput extends Component<HTMLDivElement, HTMLFormElement>{
     titleInputElement: HTMLInputElement;
     descriptionInputElement: HTMLInputElement;
     peopleInputElement: HTMLInputElement;
 
     constructor() {
-        //<> and as is type casting
-        this.templateElement = <HTMLTemplateElement> document.getElementById('project-input')!;
-        this.hostElement = document.getElementById('app')! as HTMLDivElement;
-    
-        // Render the template
-        const importedNode = document.importNode(this.templateElement.content, true);
-        this.element = importedNode.firstElementChild as HTMLFormElement;
-        // Add id 'user-input' to the form element (for css)
-        this.element.id = 'user-input';
-        // Acess to the inputs
+        super('project-input', `app`, true,  `user-input`)
+
         this.titleInputElement =<HTMLInputElement> this.element.querySelector('#title');
         this.descriptionInputElement = this.element.querySelector('#description') as HTMLInputElement;
         this.peopleInputElement = this.element.querySelector('#people') as HTMLInputElement;
 
         this.configure();
-        this.attach();
+    }
+
+    // Add event listener
+    // TODO fix @autobind
+    // It's covention have public methods first
+    configure(): void {
+        this.element.addEventListener('submit', this.submitHandler.bind(this));
+    }
+
+    renderContent(): void {
     }
 
     //tupla
@@ -186,15 +198,6 @@ class ProjectInput {
         }
     }
 
-    // Add event listener
-    // TODO fix @autobind
-    private configure() {
-        this.element.addEventListener('submit', this.submitHandler.bind(this));
-    }
-
-    private attach(){
-        this.hostElement.insertAdjacentElement('afterbegin', this.element);
-    }
 }
 
 type Listener = (items: Project[]) => void;
