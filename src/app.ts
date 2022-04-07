@@ -200,24 +200,31 @@ class ProjectInput extends Component<HTMLDivElement, HTMLFormElement>{
 
 }
 
-type Listener = (items: Project[]) => void;
+// T generic type
+type Listener<T> = (items: T[]) => void;
+
+class State<T> {
+    // protected is only acesible by the children
+    protected listeners: Listener<T>[] = [];
+
+    addListener(listenerFn: Listener<T>){
+        this.listeners.push(listenerFn);        
+    }
+}
 
 // Global state management class
-class ProjectState{
-    private listeners: Listener[] = [];
+class ProjectState extends State<Project>{
     private projects: Project[] = [];
     private static instance: ProjectState;
 
     //Guarantee that tis is a singleton class
-    constructor(){}
+    constructor(){
+        super();
+    }
 
     // TODO check if this is working fine
     static getInstance() {
         return this.instance || (this.instance = new ProjectState());
-    }
-
-    addListener(listenerFn: Listener){
-        this.listeners.push(listenerFn);
     }
 
     addProject(title: string, description: string, numOfPeople: number){
