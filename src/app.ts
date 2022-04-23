@@ -29,7 +29,6 @@ function validate(validatableInput: Validatable): boolean{
     return isValid;
 }
 
-
 // Autobin decorator
 function autobind(
     _: any,
@@ -111,9 +110,7 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement> {
         const listElement = document.getElementById(`${this.type}-project-list`)! as HTMLUListElement;
         listElement.innerHTML = '';
         for (const projectItem of this.assignedProjects){
-            const listItem = document.createElement('li');
-            listItem.textContent = projectItem.title;
-            listElement.appendChild(listItem);
+            new ProjectItem(this.element.querySelector('ul')!.id, projectItem);
         } 
     }
 } 
@@ -228,7 +225,7 @@ class ProjectState extends State<Project>{
     }
 
     addProject(title: string, description: string, numOfPeople: number){
-        const newProject = new Project(Math.random(), title, description, numOfPeople, ProjectStatus.Active);
+        const newProject = new Project(Math.random().toString(), title, description, numOfPeople, ProjectStatus.Active);
         this.projects.push(newProject);
         for (const listenerFn of this.listeners) {
             listenerFn(this.projects.slice());
@@ -237,8 +234,32 @@ class ProjectState extends State<Project>{
 }
 
 enum ProjectStatus { Active, Finished };
+
 class Project {
-    constructor (public id: number, public title: string, public description: string, public people: number, public status: ProjectStatus){}
+    constructor (public id: string, public title: string, public description: string, public people: number, public status: ProjectStatus){}
+}
+
+// Project Item class
+class ProjectItem extends Component<HTMLUListElement, HTMLLIElement> {
+
+    private project: Project;
+
+    constructor(hostId: string, project: Project){
+        super('single-project', hostId, false, project.id);
+        this.project = project;
+
+        this.configure();
+        this.renderContent();
+    }
+
+    configure(): void {}
+
+    renderContent(): void {
+        this.element.querySelector('h2')!.textContent = this.project.title;
+        this.element.querySelector('h3')!.textContent = this.project.people.toString();
+        this.element.querySelector('p')!.textContent = this.project.description ;
+    }
+
 }
 
 const projectState = ProjectState.getInstance();
