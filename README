@@ -13,3 +13,5 @@ Resources
 * Reference vs primitive values: https://academind.com/tutorials/reference-vs-primitive-values/ (video 99)
 * Property descriptor: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty (video 113)
 * More decorators: https://www.typescriptlang.org/docs/handbook/decorators.html (video 118)
+* https://dev.to/nickytonline/why-you-might-want-to-consider-using-typescript-6j3
+* https://www.typescriptlang.org/play
