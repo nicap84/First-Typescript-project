@@ -1,11 +1,12 @@
 This is my first TypeScript project based on Udemy course
 
 Udemy Typescript course (https://www.udemy.com/course/understanding-typescript/learn/lecture/16894076?start=375#content)
-Run:
-npm i
-npm run ts:watch
+
+npm install
+npm run build // npm run build:prod
 npm run start
 
+//TODO update dependencies, now are old because webpack server is not running modern dependencies
 
 Resources
 * Genereics: https://www.typescriptlang.org/docs/handbook/generics.html (section 7)
